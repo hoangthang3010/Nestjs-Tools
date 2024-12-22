@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+// import { Cron } from '@nestjs/schedule';
 import axios from 'axios';
 import * as crypto from 'crypto';
 
@@ -18,7 +18,7 @@ export class ShopeeAffiliateService {
   private readonly logger = new Logger(ShopeeAffiliateService.name);
 
   // Đặt cron job để gọi API mỗi 30 phút
-  @Cron(process.env.CRON_SCHEDULE || '*/1 * * * *')
+  // @Cron(process.env.CRON_SCHEDULE || '*/1 * * * *')
   async handleCron() {
     this.logger.debug(
       'Đang gọi API Shopee Affiliate để lấy báo cáo chuyển đổi',
