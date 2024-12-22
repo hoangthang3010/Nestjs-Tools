@@ -11,7 +11,7 @@ import { GoogleSheetsService } from '../google-sheets/google-sheets.service';
 export class ShopeeAffiliateService {
   constructor(
     // private readonly redisService: RedisService,
-    private readonly GoogleSheetsService: GoogleSheetsService,
+    private readonly googleSheetsService: GoogleSheetsService,
     private readonly notificationService: NotificationService,
   ) {}
 
@@ -37,7 +37,7 @@ export class ShopeeAffiliateService {
 
       if (!responseCalculateTotals.hasToday) return;
 
-      if (await this.GoogleSheetsService.hasSentMessageToday()) {
+      if (await this.googleSheetsService.hasSentMessageToday()) {
         console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
         return;
       }
@@ -66,7 +66,7 @@ Tổng hoa hồng tháng này là: ${responseCalculateTotals.totalcommissionMont
         )}
         `,
       );
-      await this.GoogleSheetsService.markMessageSent(`${day}/${month}/${year}`);
+      await this.googleSheetsService.markMessageSent(`${day}/${month}/${year}`);
       // await this.redisService.markMessageSent();
     } catch (error) {
       this.logger.error('Lỗi khi gọi API Shopee Affiliate:', error.message);
@@ -146,11 +146,11 @@ Tổng hoa hồng tháng này là: ${responseCalculateTotals.totalcommissionMont
     }
   }
 
-  private generateSignature(factor: string): string {
+  public generateSignature(factor: string): string {
     return crypto.createHash('sha256').update(factor).digest('hex');
   }
 
-  private calculateTotals(data: any[]) {
+  public calculateTotals(data: any[]) {
     let totalShopeeCommissionCappedDay = 0;
     let totalItemPriceDay = 0;
     let totalRecordsDay = 0;
@@ -210,44 +210,3 @@ Tổng hoa hồng tháng này là: ${responseCalculateTotals.totalcommissionMont
     };
   }
 }
-
-//   public async getConversionReport(day: number, month: number, year: number) {
-//     const appId = process.env.SHOPEE_APP_ID;
-//     const secret = process.env.SHOPEE_SECRET;
-//     const timestamp = Math.floor(Date.now() / 1000);
-//     const path = '/v2/affiliate/report/get';
-
-//     const payload = JSON.stringify({
-//       query: `{conversionReport(purchaseTimeStart: ${timestamp - 3600}, purchaseTimeEnd: ${timestamp}, scrollId: "") {...}}`,
-//     });
-
-//     const signatureString = `${appId}${timestamp}${payload}${secret}`;
-//     const signature = this.generateSignature(signatureString);
-
-//     const authorizationHeader = `SHA256 Credential=${appId}, Timestamp=${timestamp}, Signature=${signature}`;
-
-//     const params = {
-//       app_id: appId,
-//       timestamp,
-//       sign: signature,
-//       date: `${year}-${month}-${day}`,
-//     };
-
-//     const url = `https://open-api.affiliate.shopee.vn${path}`;
-
-//     try {
-//       const response = await axios.get(url, {
-//         params,
-//         headers: { Authorization: authorizationHeader },
-//       });
-//       return response.data;
-//     } catch (error) {
-//       this.logger.error('Lỗi khi gọi API Shopee Affiliate:', error.message);
-//       throw error;
-//     }
-//   }
-
-//   private generateSignature(baseString: string): string {
-//     return crypto.createHash('sha256').update(baseString).digest('hex');
-//   }
-// }

@@ -1,5 +1,7 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ShopeeAffiliateService } from './shopee-affiliate.service';
+import { GoogleSheetsService } from '../google-sheets/google-sheets.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Controller('shopee-affiliate')
 export class ShopeeAffiliateController {
@@ -7,6 +9,8 @@ export class ShopeeAffiliateController {
 
   constructor(
     private readonly shopeeAffiliateService: ShopeeAffiliateService,
+    private readonly googleSheetsService: GoogleSheetsService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Get('conversion-report')
@@ -17,7 +21,7 @@ export class ShopeeAffiliateController {
 
     const currentDate = new Date();
     const day = currentDate.getDate();
-    const month = currentDate.getMonth() + 1; // Tháng trong JavaScript bắt đầu từ 0
+    const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
 
     try {
@@ -26,10 +30,46 @@ export class ShopeeAffiliateController {
         month,
         year,
       );
-      return response; // Trả về kết quả từ dịch vụ
+      const responseCalculateTotals =
+        this.shopeeAffiliateService.calculateTotals(response);
+      this.logger.debug(responseCalculateTotals);
+      console.log('test log');
+
+      if (!responseCalculateTotals.hasToday) return;
+
+      if (await this.googleSheetsService.hasSentMessageToday()) {
+        console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
+        return;
+      }
+
+      // if (await this.redisService.hasSentMessageToday()) {
+      //   console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
+      //   return;
+      // }
+
+      await this.notificationService.sendMessageToTelegram(
+        `Hoa hồng của ngày ${day - 1}/${month}/${year} đã có rồi bạn ơi 😊😊
+Tổng hoa hồng ngày hôm nay là: ${this.shopeeAffiliateService
+          .calculateTotals(response)
+          .totalcommissionDay.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+          })}
+Tổng số đơn hàng ngày hôm nay là: ${responseCalculateTotals.totalRecordsDay} đơn
+----------------
+Tổng hoa hồng tháng này là: ${responseCalculateTotals.totalcommissionMonth.toLocaleString(
+          'vi-VN',
+          {
+            style: 'currency',
+            currency: 'VND',
+          },
+        )}
+        `,
+      );
+      await this.googleSheetsService.markMessageSent(`${day}/${month}/${year}`);
+      // await this.redisService.markMessageSent();
     } catch (error) {
       this.logger.error('Lỗi khi gọi API Shopee Affiliate:', error.message);
-      throw error; // Throw lỗi để controller có thể xử lý
     }
   }
   @Get()
