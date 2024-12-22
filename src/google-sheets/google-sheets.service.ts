@@ -58,6 +58,46 @@ export class GoogleSheetsService implements OnModuleInit {
       console.error('Error updating Google Sheet:', error.message);
     }
   }
+
+  async markMessageSent(data: string): Promise<void> {
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+    const range = 'shopee';
+
+    if (!this.sheets) {
+      console.error('Google Sheets client is not initialized.');
+      return;
+    }
+
+    try {
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range,
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [['date_send'], [data]],
+        },
+      });
+      console.log('Google Sheet updated successfully');
+    } catch (error) {
+      console.error('Error updating Google Sheet:', error.message);
+    }
+  }
+  async hasSentMessageToday() {
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1; // Tháng trong JavaScript bắt đầu từ 0
+    const year = currentDate.getFullYear();
+
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+    const range = 'shopee';
+
+    const data = await this.sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range,
+    });
+
+    return data.data.values?.[1]?.[0] === `${day}/${month}/${year}`;
+  }
   onModuleInit() {
     this.initialize(); // Gọi khởi tạo ngay khi module được khởi tạo
   }
