@@ -6,9 +6,7 @@ export class TelegramService {
   private readonly bot: any;
 
   constructor() {
-    this.bot = new TelegramBot(process.env['TELEGRAM_TOKEN'] || '', {
-      polling: true,
-    });
+    this.bot = new TelegramBot(process.env['TELEGRAM_TOKEN'] || '');
   }
 
   sendMessage(message: string) {

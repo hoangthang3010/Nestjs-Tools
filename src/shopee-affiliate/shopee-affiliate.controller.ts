@@ -22,11 +22,8 @@ export class ShopeeAffiliateController {
       year,
       hasToday,
       totalcommissionDay,
-      // totalItemPriceDay,
       totalRecordsDay,
       totalcommissionMonth,
-      // totalItemPriceMonth,
-      // totalRecordsMonth,
     }: any,
   ) {
     if (!hasToday) return 'Hôm nay chưa có báo cáo';

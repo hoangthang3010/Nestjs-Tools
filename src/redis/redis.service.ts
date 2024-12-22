@@ -7,10 +7,10 @@ export class RedisService {
   private redis: Redis;
 
   constructor(private readonly configService: ConfigService) {
-    this.redis = new Redis({
-      host: this.configService.get('REDIS_HOST') || '127.0.0.1',
-      port: Number(this.configService.get('REDIS_PORT')) || 6379,
-    });
+    // this.redis = new Redis({
+    //   host: this.configService.get('REDIS_HOST') || '127.0.0.1',
+    //   port: Number(this.configService.get('REDIS_PORT')) || 6379,
+    // });
   }
 
   async set(key: string, value: string, ttl?: number): Promise<void> {
