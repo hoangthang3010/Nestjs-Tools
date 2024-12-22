@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import * as TelegramBot from 'node-telegram-bot-api';
-
+import TelegramBot from 'node-telegram-bot-api';
 @Injectable()
 export class TelegramService {
   private readonly bot: any;
 
   constructor() {
-    this.bot = new TelegramBot(process.env['TELEGRAM_TOKEN'] || '');
+    this.bot = new TelegramBot(process.env['TELEGRAM_TOKEN'] || '', {
+      polling: true,
+    });
   }
 
   sendMessage(message: string) {
