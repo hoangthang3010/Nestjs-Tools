@@ -31,6 +31,9 @@ export class ShopeeAffiliateService {
       const response = await this.getConversionReport(day, month, year);
       const responseCalculateTotals = this.calculateTotals(response);
       this.logger.debug(responseCalculateTotals);
+      console.log('test log');
+
+      await this.notificationService.sendMessageToTelegram('test send message');
       if (!responseCalculateTotals.hasToday) return;
 
       if (await this.redisService.hasSentMessageToday()) {
