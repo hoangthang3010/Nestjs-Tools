@@ -18,11 +18,6 @@ export class ShopeeAffiliateService {
   // Đặt cron job để gọi API mỗi 30 phút
   @Cron(process.env.CRON_SCHEDULE || '*/1 * * * *')
   async handleCron() {
-    if (await this.redisService.hasSentMessageToday()) {
-      console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
-      return;
-    }
-
     this.logger.debug(
       'Đang gọi API Shopee Affiliate để lấy báo cáo chuyển đổi',
     );
@@ -37,6 +32,12 @@ export class ShopeeAffiliateService {
       const responseCalculateTotals = this.calculateTotals(response);
       this.logger.debug(responseCalculateTotals);
       if (!responseCalculateTotals.hasToday) return;
+
+      if (await this.redisService.hasSentMessageToday()) {
+        console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
+        return;
+      }
+
       await this.notificationService.sendMessageToTelegram(
         `Hoa hồng của ngày ${day - 1}/${month}/${year} đã có rồi bạn ơi 😊😊
 Tổng hoa hồng ngày hôm nay là: ${this.calculateTotals(
