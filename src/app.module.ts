@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RedisModule } from './redis/redis.module';
+// import { RedisModule } from './redis/redis.module';
 import { VideoUpdateModule } from './video-update/video-update.module';
 import { GoogleSheetsModule } from './google-sheets/google-sheets.module';
 import { FacebookModule } from './facebook/facebook.module';
@@ -14,7 +14,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    RedisModule,
+    // RedisModule,
     FacebookModule,
     GoogleSheetsModule,
     VideoUpdateModule,

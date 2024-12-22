@@ -26,7 +26,10 @@ export class ShopeeAffiliateController {
       totalcommissionMonth,
     }: any,
   ) {
-    if (!hasToday) return 'Hôm nay chưa có báo cáo';
+    if (!hasToday) {
+      console.log('Hôm nay chưa có báo cáo');
+      return 'Hôm nay chưa có báo cáo';
+    }
 
     if (await this.googleSheetsService.hasSentMessageToday()) {
       console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
@@ -34,19 +37,14 @@ export class ShopeeAffiliateController {
     }
 
     const content = `Hoa hồng của ngày ${day - 1}/${month}/${year} đã có rồi bạn ơi 😊😊
-Tổng hoa hồng ngày hôm nay là: ${totalcommissionDay?.toLocaleString('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    })}
-Tổng số đơn hàng ngày hôm nay là: ${totalRecordsDay} đơn
-----------------
-Tổng hoa hồng tháng này là: ${totalcommissionMonth?.toLocaleString('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    })}
-    `;
+    Tổng hoa hồng ngày hôm nay là: ${totalcommissionDay}
+    Tổng số đơn hàng ngày hôm nay là: ${totalRecordsDay} đơn
+    ----------------
+    Tổng hoa hồng tháng này là: ${totalcommissionMonth}
+        `;
 
-    await this.notificationService.sendMessageToTelegram(content);
+    await this.shopeeAffiliateService.sendMessageToTelegram(content);
+    // await this.notificationService.sendMessageToTelegram(content);
     await this.googleSheetsService.markMessageSent(`${day}/${month}/${year}`);
     return 'ok';
     // this.logger.debug(

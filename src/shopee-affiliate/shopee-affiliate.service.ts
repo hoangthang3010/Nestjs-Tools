@@ -9,6 +9,9 @@ import { GoogleSheetsService } from '../google-sheets/google-sheets.service';
 
 @Injectable()
 export class ShopeeAffiliateService {
+  private readonly TELEGRAM_API_URL = `https://api.telegram.org/bot${process.env['TELEGRAM_TOKEN']}/sendMessage`;
+  private readonly CHAT_ID = process.env['TELEGRAM_CHAT_ID'];
+
   constructor(
     // private readonly redisService: RedisService,
     private readonly googleSheetsService: GoogleSheetsService,
@@ -208,5 +211,19 @@ Tổng hoa hồng tháng này là: ${responseCalculateTotals.totalcommissionMont
       totalItemPriceMonth,
       totalRecordsMonth,
     };
+  }
+  public async sendMessageToTelegram(text: string): Promise<void> {
+    const response = await fetch(this.TELEGRAM_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        chat_id: this.CHAT_ID,
+        text,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send message to Telegram');
+    }
   }
 }

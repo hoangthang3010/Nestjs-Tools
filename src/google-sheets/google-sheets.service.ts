@@ -95,6 +95,7 @@ export class GoogleSheetsService implements OnModuleInit {
       spreadsheetId,
       range,
     });
+    console.log(data.data.values, ' - ', `${day}/${month}/${year}`);
 
     return data.data.values?.[1]?.[0] === `${day}/${month}/${year}`;
   }
