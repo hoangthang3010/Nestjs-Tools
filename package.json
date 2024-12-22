@@ -6,8 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && npm run copy-keys",
-    "copy-keys": "ncp ./keys.json ./dist/keys.json",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -36,7 +35,6 @@
     "dotenv": "^16.4.7",
     "googleapis": "^144.0.0",
     "ioredis": "^5.4.2",
-    "ncp": "^2.0.0",
     "node-telegram-bot-api": "^0.66.0",
     "path": "^0.12.7",
     "redis": "^4.7.0",
