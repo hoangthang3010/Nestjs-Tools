@@ -32,4 +32,8 @@ export class ShopeeAffiliateController {
       throw error; // Throw lỗi để controller có thể xử lý
     }
   }
+  @Get()
+  getUsers(): string {
+    return 'This action returns all users';
+  }
 }
