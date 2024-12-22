@@ -35,41 +35,43 @@ export class ShopeeAffiliateController {
       this.logger.debug(responseCalculateTotals);
       console.log('test log');
 
-      if (!responseCalculateTotals.hasToday) return;
+      if (!responseCalculateTotals.hasToday) return 'Hôm nay chưa có báo cáo';
 
       if (await this.googleSheetsService.hasSentMessageToday()) {
         console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
-        return;
+        return 'Hôm nay đã gửi tin nhắn, không gửi nữa.';
       }
 
       // if (await this.redisService.hasSentMessageToday()) {
       //   console.log('Hôm nay đã gửi tin nhắn, không gửi nữa.');
       //   return;
       // }
-
-      await this.notificationService.sendMessageToTelegram(
-        `Hoa hồng của ngày ${day - 1}/${month}/${year} đã có rồi bạn ơi 😊😊
+      const content = `Hoa hồng của ngày ${day - 1}/${month}/${year} đã có rồi bạn ơi 😊😊
 Tổng hoa hồng ngày hôm nay là: ${this.shopeeAffiliateService
-          .calculateTotals(response)
-          .totalcommissionDay.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-          })}
+        .calculateTotals(response)
+        .totalcommissionDay.toLocaleString('vi-VN', {
+          style: 'currency',
+          currency: 'VND',
+        })}
 Tổng số đơn hàng ngày hôm nay là: ${responseCalculateTotals.totalRecordsDay} đơn
 ----------------
 Tổng hoa hồng tháng này là: ${responseCalculateTotals.totalcommissionMonth.toLocaleString(
-          'vi-VN',
-          {
-            style: 'currency',
-            currency: 'VND',
-          },
-        )}
-        `,
-      );
+        'vi-VN',
+        {
+          style: 'currency',
+          currency: 'VND',
+        },
+      )}
+      `;
+
+      await this.notificationService.sendMessageToTelegram(content);
       await this.googleSheetsService.markMessageSent(`${day}/${month}/${year}`);
       // await this.redisService.markMessageSent();
+      return content;
     } catch (error) {
       this.logger.error('Lỗi khi gọi API Shopee Affiliate:', error.message);
+
+      return 'Lấy báo cáo không thành công';
     }
   }
   @Get()
