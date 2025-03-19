@@ -18,4 +18,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
   },
+  "include": ["src/**/*"],
+  "exclude": ["public/videos/*.ts", "assets/raw/*.ts"]
 }

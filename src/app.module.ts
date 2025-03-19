@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 // import { RedisModule } from './redis/redis.module';
 import { VideoUpdateModule } from './video-update/video-update.module';
 import { GoogleSheetsModule } from './google-sheets/google-sheets.module';
+import { GoogleSheetsController } from './google-sheets/google-sheets.controller';
+import { GoogleSheetsService } from './google-sheets/google-sheets.service';
 import { FacebookModule } from './facebook/facebook.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ShopeeAffiliateService } from './shopee-affiliate/shopee-affiliate.service';
@@ -11,6 +13,7 @@ import { ShopeeAffiliateController } from './shopee-affiliate/shopee-affiliate.c
 import { NotificationModule } from './notification/notification.module';
 
 import { ConfigModule } from '@nestjs/config';
+import { UploadController } from './upload-png-to-server/upload.controller';
 
 @Module({
   imports: [
@@ -22,8 +25,13 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, ShopeeAffiliateController],
-  providers: [AppService, ShopeeAffiliateService],
+  controllers: [
+    AppController,
+    ShopeeAffiliateController,
+    GoogleSheetsController,
+    UploadController,
+  ],
+  providers: [AppService, ShopeeAffiliateService, GoogleSheetsService],
 })
 export class AppModule {}
 

@@ -102,4 +102,16 @@ export class GoogleSheetsService implements OnModuleInit {
   onModuleInit() {
     this.initialize(); // Gọi khởi tạo ngay khi module được khởi tạo
   }
+
+  async getData() {
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+    const range = 'shopee';
+
+    const data = await this.sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range,
+    });
+
+    return data;
+  }
 }
